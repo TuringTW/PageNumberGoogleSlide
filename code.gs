@@ -70,7 +70,7 @@ function insertPageNumberBasedOnTemplate(){
     newPNEle.setTitle("pageNumber")
     text = newPNEle.asShape().getText()
     text.replaceAllText("#T#", slides.length)
-    text.replaceAllText("#N#", i+1);    
+    text.replaceAllText("#C#", i+1);    
   }
 }
 function insertPageNumberTemplate() {  
@@ -88,11 +88,11 @@ function insertPageNumberTemplate() {
   var active_pres = SlidesApp.getActivePresentation()
   var pageHeight = active_pres.getPageHeight()
   var pageWidth = active_pres.getPageWidth()
-  var boxWidth = 80
+  var boxWidth = 100
   var boxHeight = 40
   
   var slide = active_pres.getSelection().getCurrentPage();
-  slide.insertTextBox("#N#/#T#", pageWidth-boxWidth, pageHeight-boxHeight, boxWidth, boxHeight).setTitle("pageNumberTemplate")
+  var shape = slide.insertTextBox("#C# / #T#", pageWidth-boxWidth, pageHeight-boxHeight, boxWidth, boxHeight).setTitle("pageNumberTemplate")
   shape.getText().getTextStyle().setFontSize(15)
   shape.getText().getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.END)
 }
