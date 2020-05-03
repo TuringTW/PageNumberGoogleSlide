@@ -40,6 +40,39 @@ function insertPageNumber() {
     shape.getText().getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.END)
   }
 }
+function insertPageNumberBasedOnTemplate(){
+  var template = getTemplateFromPage();
+  if(!template){
+    var ui = SlidesApp.getUi();
+    var result = ui.alert(
+      'Please confirm',
+      "There's no template in this slide. Do you want to create one?",
+      ui.ButtonSet.YES_NO);
+    
+    // Process the user's response.
+    if (result == ui.Button.YES) {
+      insertPageNumberTemplate()
+      ui.alert("Warning", "Please edit the template first!");
+      return;
+    } else {
+      ui.alert("Warning", "There's no template existed in this slide! Please add one.");
+      return;
+    }
+  }
+  
+  var active_pres = SlidesApp.getActivePresentation()
+
+  var slides = active_pres.getSlides()
+  var text;
+  for(var i=0; i<slides.length;i++)
+  {
+    var newPNEle = slides[i].insertPageElement(template)
+    newPNEle.setTitle("pageNumber")
+    text = newPNEle.asShape().getText()
+    text.replaceAllText("#T#", slides.length)
+    text.replaceAllText("#N#", i+1);    
+  }
+}
 function insertPageNumberTemplate() {  
   
   
@@ -67,8 +100,8 @@ function showAlertDupTemplate() {
   var ui = SlidesApp.getUi();
 
   var result = ui.alert(
-     'Please confirm',
-     'Found a existed page number template in this slide, do you want to remove it?',
+     'Found a existed template',
+     'Do you want to remove it?',
       ui.ButtonSet.YES_NO);
 
   // Process the user's response.
@@ -77,58 +110,28 @@ function showAlertDupTemplate() {
     return true
   } else {
     // User clicked "No" or X in the title bar.
-    ui.alert("There's a template existed in this slide! Please edit that one.");
+    ui.alert("Warning", "There's a template existed in this slide! Please edit that one.");
     return false;
   }
 }
 function removeAllPageNumber(){
   var active_pres = SlidesApp.getActivePresentation()
-
   var slides = active_pres.getSlides()
-  
   for(var i=0; i<slides.length;i++)
   {
     var pgElements = slides[i].getPageElements()
     Logger.log(pgElements.length)
     for(var j=0; j< pgElements.length; j++){
       if(pgElements[j].getTitle()=="pageNumber"){
-        Logger.log(pgElements[j].getTitle())
         pgElements[j].remove()
       }
     }
   }
 }
-function insertPageNumberBasedOnTemplate(){
+function removePageNumberTemplate(){
   var template = getTemplateFromPage();
-  if(!template){
-    var ui = SlidesApp.getUi();
-    var result = ui.alert(
-      'Please confirm',
-      "There's no template in this slide. Do you want to create one?",
-      ui.ButtonSet.YES_NO);
-    
-    // Process the user's response.
-    if (result == ui.Button.YES) {
-      insertPageNumberTemplate()
-      ui.alert("Please edit the template first!");
-      return;
-    } else {
-      ui.alert("There's no template existed in this slide! Please add one.");
-      return;
-    }
-  }
-  
-  var active_pres = SlidesApp.getActivePresentation()
-
-  var slides = active_pres.getSlides()
-  var text;
-  for(var i=0; i<slides.length;i++)
-  {
-    var newPNEle = slides[i].insertPageElement(template)
-    newPNEle.setTitle("pageNumber")
-    text = newPNEle.asShape().getText()
-    text.replaceAllText("#T#", slides.length)
-    text.replaceAllText("#N#", i+1);    
+  if(template){
+    template.remove()
   }
 }
 function getTemplateFromPage(){
