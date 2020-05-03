@@ -1,0 +1,28 @@
+<link href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+     rel="stylesheet"> 
+
+<div class="sidebar">
+    
+    <button onclick='insertPageNumber()'>Insert page number</button>
+    <button onclick='removeAllPageNumber()'>Remove all page numbers</button>
+    <button onclick='insertPageNumberTemplate()'>Add a page number Template</button>
+    <button onclick='insertPageNumberBasedOnTemplate()'>Add page number based on template</button>
+
+</div>
+
+<script>
+  function insertPageNumber() {
+    google.script.run.insertPageNumber();
+  }
+  function removeAllPageNumber() {
+    google.script.run.removeAllPageNumber();
+  }
+  function insertPageNumberTemplate() {
+    google.script.run.insertPageNumberTemplate();
+  }
+  function insertPageNumberBasedOnTemplate() {
+    google.script.run.insertPageNumberBasedOnTemplate();
+  }
+</script>
+
+
