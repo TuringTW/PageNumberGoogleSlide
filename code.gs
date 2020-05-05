@@ -1,23 +1,23 @@
-function onInstall() {
-  onOpen();
+function onInstall(e) {
+  onOpen(e);
 }
 
 /* What should the add-on do when a document is opened */
-function onOpen() {
+function onOpen(e) {
   SlidesApp.getUi()
-  .createAddonMenu() // Add a new option in the Google Docs Add-ons Menu
+  .createAddonMenu() 
   .addItem("Add page numbers", "insertPageNumber")
   .addItem("Remove page numbers", "removeAllPageNumber")
   .addSeparator()	
   .addItem("Advanced", "showSidebar")
-  .addToUi();  // Run the showSidebar function when someone clicks the menu
+  .addToUi();  
 }
 
 /* Show a 300px sidebar with the HTML from googlemaps.html */
 function showSidebar() {
   var html = HtmlService.createTemplateFromFile("addPN")
     .evaluate()
-    .setTitle("Page Number Manager"); // The title shows in the sidebar
+    .setTitle("Page Number"); // The title shows in the sidebar
   SlidesApp.getUi().showSidebar(html);
 }
 
@@ -46,16 +46,15 @@ function insertPageNumberBasedOnTemplate(){
     var ui = SlidesApp.getUi();
     var result = ui.alert(
       'Please confirm',
-      "There's no template in this slide. Do you want to create one?",
+      "There's no template in this slide. Do you want to create one and add page number with default setting?",
       ui.ButtonSet.YES_NO);
     
     // Process the user's response.
     if (result == ui.Button.YES) {
       insertPageNumberTemplate()
-      ui.alert("Warning", "Please edit the template first!");
-      return;
+      template = getTemplateFromPage()
     } else {
-      ui.alert("Warning", "There's no template existed in this slide! Please add one.");
+      SlidesApp.getUi().alert("Warning", "There's no template existed in this slide! Please add one.");
       return;
     }
   }
@@ -72,10 +71,10 @@ function insertPageNumberBasedOnTemplate(){
     text.replaceAllText("#T#", slides.length)
     text.replaceAllText("#C#", i+1);    
   }
+  template.setDescription(template.getTop()+"/"+template.getLeft())
+  template.setTop(active_pres.getPageHeight()).setLeft(active_pres.getPageWidth())
 }
 function insertPageNumberTemplate() {  
-  
-  
   var template = getTemplateFromPage()
   
   if(template){
@@ -95,6 +94,7 @@ function insertPageNumberTemplate() {
   var shape = slide.insertTextBox("#C# / #T#", pageWidth-boxWidth, pageHeight-boxHeight, boxWidth, boxHeight).setTitle("pageNumberTemplate")
   shape.getText().getTextStyle().setFontSize(15)
   shape.getText().getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.END)
+  return shape
 }
 function showAlertDupTemplate() {
   var ui = SlidesApp.getUi();
@@ -120,8 +120,15 @@ function removeAllPageNumber(){
   for(var i=0; i<slides.length;i++)
   {
     var pgElements = slides[i].getPageElements()
-    Logger.log(pgElements.length)
     for(var j=0; j< pgElements.length; j++){
+      if(pgElements[j].getTitle()=="pageNumberTemplate"&&pgElements[j].getDescription()!=''){
+        var pos = pgElements[j].getDescription().split('/')
+        if(pos.length==2){
+            pgElements[j].setTop(pos[0]).setLeft(pos[1])
+            pgElements[j].setDescription("")
+            SlidesApp.getUi().alert("Restore a template on page "+(i+1)+".");
+        }
+      }
       if(pgElements[j].getTitle()=="pageNumber"){
         pgElements[j].remove()
       }
