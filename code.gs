@@ -9,6 +9,9 @@ function onOpen(e) {
   .addItem("Add page numbers", "insertPageNumber")
   .addItem("Remove page numbers", "removeAllPageNumber")
   .addSeparator()	
+  .addItem("Add template", "insertPageNumberTemplate")
+  .addItem("Add custom page numbers", "insertPageNumberBasedOnTemplate")
+  .addSeparator()	
   .addItem("Advanced", "showSidebar")
   .addToUi();  
 }
@@ -20,7 +23,13 @@ function showSidebar() {
     .setTitle("Page Number"); // The title shows in the sidebar
   SlidesApp.getUi().showSidebar(html);
 }
+function onEdit(e){
+  
 
+}
+function updatePageNumber(){
+  
+}
 /* This Google Script function does all the magic. */
 function insertPageNumber() {  
   var boxWidth = 80
@@ -54,7 +63,7 @@ function insertPageNumberBasedOnTemplate(){
       insertPageNumberTemplate()
       template = getTemplateFromPage()
     } else {
-      SlidesApp.getUi().alert("Warning", "There's no template existed in this slide! Please add one.");
+      SlidesApp.getUi().alert("Warning", "There's no template existed in this slide! Please add one.", ui.ButtonSet.OK);
       return;
     }
   }
